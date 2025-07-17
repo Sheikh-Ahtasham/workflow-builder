@@ -15,7 +15,7 @@ export default function NodePalette({ onAddNode, onDragStart }) {
             onClick={() => onAddNode(nodeType)}
             className="w-full p-2 text-left bg-green-700 hover:bg-green-600 rounded transition-colors cursor-grab active:cursor-grabbing"
           >
-            🚀 {nodeType}
+            {nodeType}
           </div>
         ))}
       </div>
@@ -30,7 +30,7 @@ export default function NodePalette({ onAddNode, onDragStart }) {
             onClick={() => onAddNode(nodeType)}
             className="w-full p-2 text-left bg-gray-700 hover:bg-gray-600 rounded transition-colors cursor-grab active:cursor-grabbing"
           >
-            ⚡ {nodeType}
+            {nodeType}
           </div>
         ))}
       </div>
@@ -45,7 +45,7 @@ export default function NodePalette({ onAddNode, onDragStart }) {
             onClick={() => onAddNode(nodeType)}
             className="w-full p-2 text-left bg-red-700 hover:bg-red-600 rounded transition-colors cursor-grab active:cursor-grabbing"
           >
-            🏁 {nodeType}
+            {nodeType}
           </div>
         ))}
       </div>

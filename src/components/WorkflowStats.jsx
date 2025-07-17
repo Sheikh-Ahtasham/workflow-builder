@@ -8,7 +8,7 @@ export default function WorkflowStats({ nodes, edges, draggedNodeType }) {
       </div>
       {draggedNodeType && (
         <div className="text-blue-400 animate-pulse">
-          📦 Dragging: {draggedNodeType}
+          Dragging: {draggedNodeType}
         </div>
       )}
     </div>
