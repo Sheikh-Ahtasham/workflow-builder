@@ -10,36 +10,65 @@ import JsonModal from "../../components/JsonModal";
 import NodeDetailsModal from "../../components/NodeDetailsModal";
 import WorkflowCanvas from "../../components/WorkflowCanvas";
 
-const initialNodes = [
-  {
-    id: "1",
-    type: "startNode",
-    position: { x: 250, y: 50 },
-    data: {
-      label: "Webhook",
-      type: "TRIGGER",
-      background: "#10b981",
-      color: "white",
-    },
-  },
-  {
-    id: "2",
-    type: "customNode",
-    position: { x: 100, y: 200 },
-    data: {
-      label: "Email",
-      type: "ACTION",
-      background: "#3b82f6",
-      color: "white",
-    },
-  },
-];
+const getInitialNodes = () => {
+  try {
+    const savedWorkflow = localStorage.getItem("workflow");
+    if (savedWorkflow) {
+      const workflow = JSON.parse(savedWorkflow);
+      if (workflow.nodes && Array.isArray(workflow.nodes)) {
+        return workflow.nodes;
+      }
+    }
+  } catch (error) {
+    console.error("Error loading initial nodes:", error);
+  }
 
-const initialEdges = [];
+  return [
+    {
+      id: "1",
+      type: "startNode",
+      position: { x: 250, y: 50 },
+      data: {
+        label: "Webhook",
+        type: "TRIGGER",
+        background: "#10b981",
+        color: "white",
+      },
+    },
+    {
+      id: "2",
+      type: "customNode",
+      position: { x: 100, y: 200 },
+      data: {
+        label: "Email",
+        type: "ACTION",
+        background: "#3b82f6",
+        color: "white",
+      },
+    },
+  ];
+};
+
+const getInitialEdges = () => {
+  try {
+    const savedWorkflow = localStorage.getItem("workflow");
+    if (savedWorkflow) {
+      const workflow = JSON.parse(savedWorkflow);
+      if (workflow.edges && Array.isArray(workflow.edges)) {
+        return workflow.edges;
+      }
+    }
+  } catch (error) {
+    console.error("Error loading initial edges:", error);
+  }
+
+  return [];
+};
 
 function Dashboard() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes());
+  const [edges, setEdges, onEdgesChange] = useEdgesState(getInitialEdges());
+
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [jsonContent, setJsonContent] = useState("");
   const [draggedNodeType, setDraggedNodeType] = useState(null);
@@ -56,6 +85,23 @@ function Dashboard() {
     }),
     []
   );
+
+  useEffect(() => {
+    if (nodes.length > 0 || edges.length > 0) {
+      try {
+        const workflow = {
+          nodes,
+          edges,
+          timestamp: new Date().toISOString(),
+          version: "1.0",
+        };
+        localStorage.setItem("workflow", JSON.stringify(workflow));
+        localStorage.setItem("workflow_backup", JSON.stringify(workflow));
+      } catch (error) {
+        console.error("❌ Failed to save workflow:", error);
+      }
+    }
+  }, [nodes, edges]);
 
   const getNodeConfig = (nodeType) => {
     const configs = {
@@ -297,12 +343,13 @@ function Dashboard() {
   );
 
   useEffect(() => {
-    if (fileInputRef.current) {
-      fileInputRef.current.addEventListener("change", handleFileUpload);
+    const fileInput = fileInputRef.current;
+    if (fileInput) {
+      fileInput.addEventListener("change", handleFileUpload);
     }
     return () => {
-      if (fileInputRef.current) {
-        fileInputRef.current.removeEventListener("change", handleFileUpload);
+      if (fileInput) {
+        fileInput.removeEventListener("change", handleFileUpload);
       }
     };
   }, [handleFileUpload]);
